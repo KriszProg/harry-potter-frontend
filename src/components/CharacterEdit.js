@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {EditLabel, DetailsDiv} from '../styled_components/CharacerEditComponents';
 import Datafetcher from '../service/Datafetcher';
+import { Redirect } from 'react-router-dom';
+import ErrorMessage from '../styled_components/ErrorMessage'
 
 
 export default function CharacterEdit(props) {
+    const [updateStatus, setUpdateStatus] = useState({});
     const [characterDetails, setCharacterDetails] = useState();
     const dataFetcher = new Datafetcher();
     const [core, setCore] = useState("");
@@ -26,7 +29,7 @@ export default function CharacterEdit(props) {
         }, [props]);
         
     useEffect(() => {
-        if (characterDetails && characterDetails !== "denied") {
+        if (characterDetails && characterDetails.name !== "Error") {
             console.log(characterDetails)
             if (characterDetails.wand != null) {
                 setCore(characterDetails.wand.split(", ")[2]);
@@ -51,8 +54,8 @@ export default function CharacterEdit(props) {
             setDeathEater(characterDetails.deathEater)
             setMinistryOfMagic(characterDetails.ministryOfMagic)
         }
-    }, [characterDetails])
-    
+    }, [characterDetails]);
+
     function handleChangeCore(event) {
         setCore(event.target.value);
     }
@@ -84,8 +87,6 @@ export default function CharacterEdit(props) {
         setMinistryOfMagic(event.target.checked);
     }
     
-    let token =
-      document.cookie.split("=")[1] === "" ? "" : document.cookie.split("=")[1];
     function submitHandler(event) {
         event.preventDefault();
         let object = {
@@ -105,10 +106,13 @@ export default function CharacterEdit(props) {
             orderOfThePhoenix : `${event.target[15].checked}`,
             ministryOfMagic : `${event.target[16].checked}`,
         };
-        dataFetcher.editCharacter(`http://localhost:8080/character/${props.match.params.id}`, object);
+        dataFetcher.editCharacter(`http://localhost:8080/character/${props.match.params.id}`, object, setUpdateStatus);
+    };
 
-    }
-    if (characterDetails && characterDetails !== "denied") {
+    if (updateStatus.status === "Done") {
+        console.log("After update redirect to Card...");
+        return <Redirect to={`/character/${props.match.params.id}`} /> 
+    } else if (characterDetails && characterDetails.name !== "Error") {
         
         let wandParts = ["", "", ""]
         if (characterDetails.wand != null) {
@@ -270,13 +274,14 @@ export default function CharacterEdit(props) {
                 </table>
                 <button type="submit">SUBMIT</button>
             </form>
-        </DetailsDiv>
-    )
-} else {
-    return (
-        <DetailsDiv>
-
-        </DetailsDiv>
-    )
-}
+            </DetailsDiv>
+        );
+    } else {
+        console.log("Loading...")
+        return (
+            <DetailsDiv>
+                <p>Loading...</p>
+            </DetailsDiv>
+        )
+    }
 }

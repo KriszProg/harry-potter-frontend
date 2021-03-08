@@ -18,21 +18,23 @@ class Datafetcher {
     axios
       .get(url, this.tokenHeader)
       .then((res) => callback(res.data))
-      .catch((e) => callback("denied"));
-  }
+      .catch((e) => callback(e));
+
+    }
 
   fetchForLoginAndRegistration(url, userDataObject, callback) {
     axios.post(url, userDataObject).then((res) => callback(res.data));
   }
 
-  editCharacter(url, userDataObject) {
+  editCharacter(url, userDataObject, callback) {
     axios
       .put(
         url, 
         userDataObject,
         this.tokenHeader
       )
-      .then((res) => console.log("xd"))
+      .then((res) => callback(res.data))
+      .catch((e) => callback(e));
   }
 }
 

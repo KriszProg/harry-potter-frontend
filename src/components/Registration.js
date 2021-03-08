@@ -3,6 +3,7 @@ import Content from "../styled_components/Content";
 import { Redirect } from "react-router-dom";
 import { useState } from "react";
 import Datafetcher from "../service/Datafetcher";
+import ErrorMessage from "../styled_components/ErrorMessage";
 
 const Registration = (props) => {
   const [registrationStatus, setRegistrationStatus] = useState({});
@@ -52,9 +53,13 @@ const Registration = (props) => {
               <input type="password" name="password" id="password" />
               <br />
             </div>
-            <button type="submit" value="Register">
-              Submit
-            </button>
+            <div>
+              <button type="submit" value="Register">
+                Submit
+              </button>
+            </div>
+              {registrationStatus.status ? 
+              <ErrorMessage><strong>Error: </strong>{registrationStatus.status}</ErrorMessage> : null}
           </div>
         </form>
       </Content>
