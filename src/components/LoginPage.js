@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Content from "../styled_components/Content";
 import { Redirect } from "react-router-dom";
 import Datafetcher from "../service/Datafetcher";
+import ErrorMessage from "../styled_components/ErrorMessage"
 
 export default function LoginPage(props) {
   const [authorization, setAuthorization] = useState({});
@@ -27,7 +28,6 @@ export default function LoginPage(props) {
   }, [props]);
 
   if (authorization.status === "Login successful!") {
-    // console.log("Muhaha... we have token: " + authorization.token);
     console.log(authorization.status);
     document.cookie = `token=${authorization.token}`;
     return <Redirect to="/" />;
@@ -50,7 +50,12 @@ export default function LoginPage(props) {
               <input type="password" name="password" id="password" />
               <br />
             </div>
-            <button type="submit">Login</button>
+            <div>
+              <button type="submit">Login</button>
+            </div>
+            {authorization.status ? 
+              <ErrorMessage><strong>Error: </strong>{authorization.status}</ErrorMessage> : null
+            }
           </div>
         </form>
       </Content>

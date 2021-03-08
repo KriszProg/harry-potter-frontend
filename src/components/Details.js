@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { CardDetails, NameOnCardDetails } from "../styled_components/index";
 import Content from "../styled_components/Content";
 import Datafetcher from "../service/Datafetcher";
+import { Link } from "react-router-dom";
+import ErrorMessage from "../styled_components/ErrorMessage";
 
 const Details = (props) => {
   const [characterDetails, setCharacterDetails] = useState();
@@ -14,7 +16,8 @@ const Details = (props) => {
     );
   }, [props]);
 
-  if (characterDetails && characterDetails !== "denied") {
+  if (characterDetails && characterDetails.name !== "Error") {
+    console.log(characterDetails);
     return (
       <Content className="character-details">
         <CardDetails>
@@ -80,16 +83,23 @@ const Details = (props) => {
         </CardDetails>
       </Content>
     );
-  } else if (characterDetails === "denied") {
+  } else if (characterDetails && characterDetails.name === "Error") {
     return (
       <Content>
-        <div>
-          <h1>You should login to see this information!</h1>
-        </div>
+        <ErrorMessage>
+          <p>You should <strong><Link to="/login">login</Link></strong> to see this information!</p>
+          <p><strong>{characterDetails.name}</strong> : {characterDetails.message}</p>
+        </ErrorMessage>
       </Content>
     );
   } else {
-    return <div></div>;
+    console.log("Loading...");
+    return (
+      <Content>
+        <div>
+          <h4>Loading...</h4>
+        </div>
+      </Content>);
   }
 };
 export default Details;
